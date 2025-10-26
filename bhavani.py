@@ -2,6 +2,7 @@ from flask import Flask, render_template_string, request, jsonify
 import hashlib, json
 from time import time
 from uuid import uuid4
+import os
 
 # ---------------- Blockchain Logic ----------------
 class Blockchain:
@@ -38,9 +39,8 @@ class Blockchain:
     def hash(block):
         return hashlib.sha256(json.dumps(block, sort_keys=True).encode()).hexdigest()
 
-
 # ---------------- Flask App ----------------
-app = Flask(__name__)
+app = Flask(__name__)  # ✅ Must be top-level
 node_identifier = str(uuid4()).replace('-', '')
 blockchain = Blockchain()
 
@@ -156,5 +156,5 @@ def full_chain():
 
 # ---------------- Run Flask ----------------
 if __name__ == '__main__':
-    # ✅ FIXED: Disable reloader to avoid "signal only works in main thread" error
-    app.run(host='0.0.0.0', port=8000, debug=True, use_reloader=False)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port, debug=True, use_reloader=False)
